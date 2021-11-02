@@ -1,16 +1,28 @@
 function start() {
+  //checks if Bearspeed changes
+  document.onchange = "setSpeed();";
+  //take start time
+  lastStingTime = new Date();
   //create bear
   bear = new Bear();
   // Add an event listener to the keypress event.
-  document.addEventListener("keydown", moveBear, false);
+  document.addEventListener("keydown", moveBear, (lastStingTime = 0), false);
   //create new array for bees
   bees = new Array();
   //create bees
   makeBees();
   //update bees
   updateBees();
-  //take start time
-  lastStingTime = new Date();
+}
+function restart() {
+  rest = true;
+  bees.length = 0;
+  document.getElementById("hits").textContent = 0;
+  document.getElementById("duration").textContent = 0;
+  clearTimeout(updateTimer);
+  document.getElementById("bear").style.left = 0 + "px";
+  document.getElementById("bear").style.top = 0 + "px";
+  start();
 }
 
 function Bear() {
@@ -51,7 +63,9 @@ function Bear() {
     if (this.y > h - ih) this.y = h - ih;
   };
 
-  this.setSpeed = function () {};
+  this.setSpeed = function () {
+    bear.dBear = Number(document.getElementById("speedBear").value);
+  };
 }
 
 // Handle keyboad events
@@ -180,21 +194,31 @@ function moveBees() {
 }
 
 function updateBees() {
+  let score = hits.innerHTML;
   // update loop for game
   //move the bees randomly
   moveBees();
   //use a fixed update period
   let period = document.getElementById("periodTimer").value; //modify this to control refresh period
-  do {
+  if (score < 1000) {
     //update the timer for the next move
     updateTimer = setTimeout("updateBees()", period);
-  } while (isHit.score < 50);
-  if (isHit.score >= 50) {
+  } else {
     clearTimeout(updateTimer);
     window.alert("Game Over!");
-    return;
   }
 }
+
+// function addBee() {
+//   //add bees
+//   let i = 1;
+//   while (i <= nbBees) {
+//     var num = i;
+//     var bee = new Bee(num); //create object and its IMG element
+//     bee.display(); //display the bee
+//     bees.push(bee); //add the bee object to the bees array
+//   }
+// }
 
 function isHit(defender, offender) {
   if (overlap(defender, offender)) {
